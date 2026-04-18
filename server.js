@@ -22,7 +22,20 @@ const port = process.env.PORT || 8080;
 /**
  * Configure Security and Efficiency Middlewares
  */
-app.use(helmet()); // Secure HTTP headers
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://maps.googleapis.com", "https://www.googletagmanager.com", "https://cdn.jsdelivr.net"],
+            frameSrc: ["'self'", "https://maps.google.com", "https://www.google.com"],
+            imgSrc: ["'self'", "data:", "https://maps.googleapis.com", "https://maps.gstatic.com", "https://*.googleapis.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+            connectSrc: ["'self'", "https://cdn.jsdelivr.net", "https://www.google-analytics.com"],
+            frameworkSrc: ["'self'"]
+        }
+    }
+}));
 app.use(cors()); // Enable CORS
 app.use(compression()); // Gzip compression
 app.use(express.json());
@@ -60,7 +73,7 @@ app.post('/api/chat', apiLimiter, [
     // Validate and sanitize the input to prevent basic injection / malformed text
     body('message').trim().escape().notEmpty().withMessage('Message is required')
 ], async (req, res) => {
-    
+
     // Check validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

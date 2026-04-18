@@ -228,52 +228,13 @@
                 <h2 id="map-heading"><i class="fas fa-map-marked-alt"></i> Geographic Position</h2>
             </div>
             <div class="card-content" style="padding:0;">
-                <div id="google-map" style="width: 100%; height: 100%; min-height: 400px; background: #222;"
-                    aria-label="Google Map View"></div>
-            </div>
+                <iframe id="google-map" width="100%" height="400" style="border:0; min-height:400px;" loading="lazy"
+                    allowfullscreen referrerpolicy="no-referrer-when-downgrade"
+                    src="https://maps.google.com/maps?q=22.5726,88.3639&z=15&output=embed"
+                    aria-label="Google Map View - Salt Lake Stadium, Kolkata">
+                </iframe>
         </section>
     </main>
-
-    <!-- Google Maps JS API (Mock Key) -->
-    <!-- Google Maps JS API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJFA8FuDKD1h5r_gghHfICCgTiH_CDFNI&callback=initMap"
-        async defer></script>
-    <script>
-        const venueCoords = {
-            stadium: { lat: 22.5726, lng: 88.3639, title: "Salt Lake Stadium, Kolkata" },
-            arena: { lat: 40.7505, lng: -73.9934, title: "Madison Square Garden, New York" },
-            speedway: { lat: 45.6156, lng: 9.2811, title: "Autodromo di Monza, Italy" },
-            cricket: { lat: 22.5645, lng: 88.3433, title: "Eden Gardens, Kolkata" },
-            velodrome: { lat: 48.9689, lng: 2.0625, title: "Velodrome National, France" },
-            hippodrome: { lat: 51.4077, lng: -0.6190, title: "Royal Ascot Racecourse, UK" }
-        };
-
-        let map, marker;
-
-        function initMap() {
-            const defaultVenue = venueCoords["stadium"];
-            map = new google.maps.Map(document.getElementById("google-map"), {
-                zoom: 15,
-                center: { lat: defaultVenue.lat, lng: defaultVenue.lng },
-                mapTypeId: "satellite"
-            });
-            marker = new google.maps.Marker({
-                position: { lat: defaultVenue.lat, lng: defaultVenue.lng },
-                map: map,
-                title: defaultVenue.title
-            });
-
-            document.getElementById("event-type").addEventListener("change", function () {
-                const venue = venueCoords[this.value];
-                if (venue) {
-                    const pos = { lat: venue.lat, lng: venue.lng };
-                    map.setCenter(pos);
-                    marker.setPosition(pos);
-                    marker.setTitle(venue.title);
-                }
-            });
-        }
-    </script>
     <script src="/js/app.js" defer></script>
 </body>
 
