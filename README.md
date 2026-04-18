@@ -58,16 +58,20 @@ completely broke down.
 ---
 
 ## 🏗️ Project Structure
+```
 VenueIQ/
 ├── public/
-│   ├── css/style.css      # Command Center dark theme
-│   ├── js/app.js          # Frontend logic
-│   └── index.html         # Main dashboard
-├── server.js              # Express + Gemini API routes
-├── .env                   # Environment variables (not pushed)
-├── .gitignore             # Git exclusions
-├── Dockerfile             # Container configuration
-└── package.json           # Dependencies
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── app.js
+│   └── index.html
+├── server.js
+├── .env
+├── .gitignore
+├── Dockerfile
+└── package.json
+```
 ---
 
 ## ⚙️ Local Setup
