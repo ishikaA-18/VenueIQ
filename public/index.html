@@ -8,24 +8,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics 4 (Mock) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
 </head>
 
 <body>
+    <a href="#main-content" class="skip-link"
+        style="position:absolute; top:-40px; left:0; background:#000; color:#fff; padding:8px; z-index:1000;"
+        aria-label="Skip to main content">Skip to main content</a>
     <!-- Emergency Alert Banner -->
     <div id="emergency-banner" class="emergency-banner hidden">
         <i class="fas fa-exclamation-triangle"></i>
         <span><strong>Alert:</strong> Extreme overcrowding in the East Zone. Please use alternative routes.</span>
-        <button id="close-alert"><i class="fas fa-times"></i></button>
+        <button id="close-alert" aria-label="Close alert"><i class="fas fa-times"></i></button>
     </div>
 
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" role="navigation" aria-label="Main Navigation">
         <div class="nav-brand">
             <i class="fas fa-microchip"></i>
             <h1>VenueIQ <span class="badge">v2.0</span></h1>
         </div>
         <div class="nav-controls">
-            <select id="event-type" class="venue-select">
+            <select id="event-type" class="venue-select" aria-label="Select Event Type">
                 <option value="stadium">🏟️ Outdoor Stadium (Field Sports)</option>
                 <option value="arena">🏀 Indoor Arena (Basketball/Concerts)</option>
                 <option value="speedway">🏎️ Motorsport Speedway (Racing)</option>
@@ -33,7 +45,7 @@
                 <option value="velodrome">🚴 Cycling Velodrome (Banked Track)</option>
                 <option value="hippodrome">🏇 Hippodrome (Horse Racing)</option>
             </select>
-            <select id="ticket-type" class="dark-select">
+            <select id="ticket-type" class="dark-select" aria-label="Select Ticket Type">
                 <option value="general">General Admission</option>
                 <option value="vip">VIP Access</option>
             </select>
@@ -41,11 +53,11 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="dashboard-container">
+    <main id="main-content" class="dashboard-container" role="main">
         <!-- Smart Entry Panel -->
-        <section class="card entry-panel">
+        <section class="card entry-panel" role="region" aria-labelledby="entry-heading">
             <div class="card-header">
-                <h2><i class="fas fa-door-open"></i> Smart Entry Status</h2>
+                <h2 id="entry-heading"><i class="fas fa-door-open"></i> Smart Entry Status</h2>
             </div>
             <div class="card-content">
                 <p class="subtitle">Recommended entry based on ticket type and live data.</p>
@@ -85,9 +97,9 @@
         </section>
 
         <!-- Wait Times Panel -->
-        <section class="card wait-times-panel">
+        <section class="card wait-times-panel" role="region" aria-labelledby="wait-times-heading">
             <div class="card-header">
-                <h2><i class="fas fa-clock"></i> Wait Time Predictions</h2>
+                <h2 id="wait-times-heading"><i class="fas fa-clock"></i> Wait Time Predictions</h2>
             </div>
             <div class="card-content wait-times-content">
                 <div class="wait-category">
@@ -112,9 +124,9 @@
         </section>
 
         <!-- Heatmap Panel -->
-        <section class="card heatmap-panel">
+        <section class="card heatmap-panel" role="region" aria-labelledby="heatmap-heading">
             <div class="card-header">
-                <h2><i class="fas fa-fire"></i> Live Crowd Heatmap</h2>
+                <h2 id="heatmap-heading"><i class="fas fa-fire"></i> Live Crowd Heatmap</h2>
                 <div class="legend">
                     <span class="legend-item"><span class="dot low"></span> Low</span>
                     <span class="legend-item"><span class="dot medium"></span> Medium</span>
@@ -123,7 +135,10 @@
             </div>
             <div class="card-content">
                 <div class="stadium-map" id="visual-map">
-                    <svg viewBox="0 0 1000 600" class="stadium-svg" preserveAspectRatio="xMidYMid meet">
+                    <svg viewBox="0 0 1000 600" class="stadium-svg" preserveAspectRatio="xMidYMid meet" role="img"
+                        aria-labelledby="svg-title svg-desc">
+                        <title id="svg-title">Heatmap visualization</title>
+                        <desc id="svg-desc">Live crowd density across stadium zones</desc>
                         <!-- Outer Stadium Boundary -->
                         <rect x="50" y="50" width="900" height="500" rx="150" class="svg-boundary" fill="none"
                             stroke="rgba(255,255,255,0.05)" stroke-width="4" stroke-dasharray="20 10" />
@@ -173,9 +188,9 @@
         </section>
 
         <!-- AI Assistant Panel -->
-        <section class="card ai-panel" id="chat-box">
+        <section class="card ai-panel" id="chat-box" role="region" aria-labelledby="ai-heading">
             <div class="card-header">
-                <h2><i class="fas fa-robot"></i> Intelligence Systems</h2>
+                <h2 id="ai-heading"><i class="fas fa-robot"></i> Intelligence Systems</h2>
                 <span class="badge" style="background:#00d4ff;color:#000;">ONLINE</span>
             </div>
             <div class="card-content chat-content">
@@ -186,16 +201,17 @@
                     </div>
                 </div>
                 <div class="chat-input-area">
-                    <input type="text" id="chat-input" placeholder="Enter query parameters..." autocomplete="off">
-                    <button id="send-msg"><i class="fas fa-terminal"></i></button>
+                    <input type="text" id="chat-input" placeholder="Enter query parameters..." autocomplete="off"
+                        aria-label="Chat input message">
+                    <button id="send-msg" aria-label="Send Message"><i class="fas fa-terminal"></i></button>
                 </div>
             </div>
         </section>
 
         <!-- Transport Panel -->
-        <section class="card transport-panel">
+        <section class="card transport-panel" role="region" aria-labelledby="transport-heading">
             <div class="card-header">
-                <h2><i class="fas fa-space-shuttle"></i> Departure Vectors</h2>
+                <h2 id="transport-heading"><i class="fas fa-space-shuttle"></i> Departure Vectors</h2>
             </div>
             <div class="card-content">
                 <div id="transport-status" class="transport-container">
@@ -203,9 +219,62 @@
                 </div>
             </div>
         </section>
+        </section>
+
+        <!-- Dynamic Map Panel -->
+        <section class="card map-panel" role="region" aria-labelledby="map-heading"
+            style="grid-column: span 15; min-height: 400px; display: flex; flex-direction: column;">
+            <div class="card-header">
+                <h2 id="map-heading"><i class="fas fa-map-marked-alt"></i> Geographic Position</h2>
+            </div>
+            <div class="card-content" style="padding:0;">
+                <div id="google-map" style="width: 100%; height: 100%; min-height: 400px; background: #222;"
+                    aria-label="Google Map View"></div>
+            </div>
+        </section>
     </main>
 
-    <script src="/js/app.js"></script>
+    <!-- Google Maps JS API (Mock Key) -->
+    <!-- Google Maps JS API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJFA8FuDKD1h5r_gghHfICCgTiH_CDFNI&callback=initMap"
+        async defer></script>
+    <script>
+        const venueCoords = {
+            stadium: { lat: 22.5726, lng: 88.3639, title: "Salt Lake Stadium, Kolkata" },
+            arena: { lat: 40.7505, lng: -73.9934, title: "Madison Square Garden, New York" },
+            speedway: { lat: 45.6156, lng: 9.2811, title: "Autodromo di Monza, Italy" },
+            cricket: { lat: 22.5645, lng: 88.3433, title: "Eden Gardens, Kolkata" },
+            velodrome: { lat: 48.9689, lng: 2.0625, title: "Velodrome National, France" },
+            hippodrome: { lat: 51.4077, lng: -0.6190, title: "Royal Ascot Racecourse, UK" }
+        };
+
+        let map, marker;
+
+        function initMap() {
+            const defaultVenue = venueCoords["stadium"];
+            map = new google.maps.Map(document.getElementById("google-map"), {
+                zoom: 15,
+                center: { lat: defaultVenue.lat, lng: defaultVenue.lng },
+                mapTypeId: "satellite"
+            });
+            marker = new google.maps.Marker({
+                position: { lat: defaultVenue.lat, lng: defaultVenue.lng },
+                map: map,
+                title: defaultVenue.title
+            });
+
+            document.getElementById("event-type").addEventListener("change", function () {
+                const venue = venueCoords[this.value];
+                if (venue) {
+                    const pos = { lat: venue.lat, lng: venue.lng };
+                    map.setCenter(pos);
+                    marker.setPosition(pos);
+                    marker.setTitle(venue.title);
+                }
+            });
+        }
+    </script>
+    <script src="/js/app.js" defer></script>
 </body>
 
 </html>

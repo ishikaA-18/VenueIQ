@@ -2,30 +2,76 @@ const express = require('express');
 const dotenv = require('dotenv');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const path = require('path');
+const helmet = require('helmet');
+const cors = require('cors');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
+const { body, validationResult } = require('express-validator');
 
 dotenv.config();
+
+// Ensure the API key is provided on startup
+if (!process.env.GEMINI_API_KEY) {
+    console.error("CRITICAL ERROR: GEMINI_API_KEY environment variable is not defined.");
+    process.exit(1);
+}
 
 const app = express();
 const port = process.env.PORT || 8080;
 
+/**
+ * Configure Security and Efficiency Middlewares
+ */
+app.use(helmet()); // Secure HTTP headers
+app.use(cors()); // Enable CORS
+app.use(compression()); // Gzip compression
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
-// The Gemini API will be initialized inside the route so it properly reads the env variable
-app.post('/api/chat', async (req, res) => {
+// Set up rate limiting to prevent API abuse (max 100 requests per 15 minutes)
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: { error: 'Too many requests, please try again later.' }
+});
+
+// Serve frontend with detailed caching policies
+app.use(express.static(path.join(__dirname, 'public'), {
+    maxAge: '1d',
+    etag: true
+}));
+
+/**
+ * Health check endpoint for monitoring systems.
+ * @route GET /health
+ * @returns {object} Status object signaling server health
+ */
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', uptime: process.uptime() });
+});
+
+/**
+ * Chat endpoint handling interactions with the Gemini AI model.
+ * 
+ * @route POST /api/chat
+ * @param {string} req.body.message - The incoming message queried by the user.
+ * @returns {object} Response object containing the 'reply' text.
+ */
+app.post('/api/chat', apiLimiter, [
+    // Validate and sanitize the input to prevent basic injection / malformed text
+    body('message').trim().escape().notEmpty().withMessage('Message is required')
+], async (req, res) => {
+    
+    // Check validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array()[0].msg });
+    }
+
     try {
         const apiKey = process.env.GEMINI_API_KEY;
-        if (!apiKey) {
-            return res.status(500).json({ error: 'Gemini API key is not configured on the server.' });
-        }
-        
         const genAI = new GoogleGenerativeAI(apiKey);
 
         const { message } = req.body;
-        if (!message) {
-            return res.status(400).json({ error: 'Message is required' });
-        }
-
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         const prompt = `You are the VenueIQ AI Assistant, a smart venue management system for a large sporting event. 
@@ -49,11 +95,17 @@ User Question: ${message}`;
 
         res.json({ reply: text });
     } catch (error) {
-        console.error("AI Error:", error);
+        // Proper error logging with timestamp
+        console.error(`[${new Date().toISOString()}] AI Error:`, error.message);
         res.status(500).json({ error: 'Failed to communicate with AI Assistant.' });
     }
 });
 
-app.listen(port, () => {
-    console.log(`VenueIQ server running on port ${port}`);
-});
+// Start the server if it's not being imported for Jest Testing
+if (require.main === module) {
+    app.listen(port, () => {
+        console.info(`VenueIQ server running on port ${port}`);
+    });
+}
+
+module.exports = app;
