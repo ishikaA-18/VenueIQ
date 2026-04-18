@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VenueIQ - Smart Venue Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <!-- Emergency Alert Banner -->
+    <div id="emergency-banner" class="emergency-banner hidden">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Alert:</strong> Extreme overcrowding in the East Zone. Please use alternative routes.</span>
+        <button id="close-alert"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-microchip"></i>
+            <h1>VenueIQ <span class="badge">v2.0</span></h1>
+        </div>
+        <div class="nav-controls">
+            <select id="event-type" class="venue-select">
+                <option value="stadium">🏟️ Outdoor Stadium (Field Sports)</option>
+                <option value="arena">🏀 Indoor Arena (Basketball/Concerts)</option>
+                <option value="speedway">🏎️ Motorsport Speedway (Racing)</option>
+                <option value="cricket">🏏 Cricket Ground (Oval Field)</option>
+                <option value="velodrome">🚴 Cycling Velodrome (Banked Track)</option>
+                <option value="hippodrome">🏇 Hippodrome (Horse Racing)</option>
+            </select>
+            <select id="ticket-type" class="dark-select">
+                <option value="general">General Admission</option>
+                <option value="vip">VIP Access</option>
+            </select>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-container">
+        <!-- Smart Entry Panel -->
+        <section class="card entry-panel">
+            <div class="card-header">
+                <h2><i class="fas fa-door-open"></i> Smart Entry Status</h2>
+            </div>
+            <div class="card-content">
+                <p class="subtitle">Recommended entry based on ticket type and live data.</p>
+                <div id="entry-recommendation" class="recommendation-box">
+                    <div class="gate-info">
+                        <h3 id="best-gate" class="data-value">West Gate</h3>
+                        <span id="gate-status" class="status-badge optimal">Optimal</span>
+                    </div>
+                    <div class="gate-details">
+                        <i class="fas fa-walking"></i> Est. wait: <strong id="best-gate-wait" class="data-value">5
+                            mins</strong>
+                    </div>
+                </div>
+
+                <!-- New Info: Alternative Gate & Crowd Bar -->
+                <div class="alternative-info" style="margin-top: 20px;">
+                    <p class="label" style="margin-bottom: 8px;">Alternative Option:</p>
+                    <div class="alt-gate"
+                        style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border-left: 3px solid var(--color-brand-cyan);">
+                        <span id="alt-gate-name" style="font-weight: 600; color: #fff;">South Gate</span>
+                        <span id="alt-gate-wait" class="data-value">12 mins wait</span>
+                    </div>
+                </div>
+                <div class="crowd-level-container" style="margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span class="label">Overall Crowd Density</span>
+                        <span id="crowd-level-text" class="data-value">Moderate</span>
+                    </div>
+                    <div class="progress-bar-bg"
+                        style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                        <div id="crowd-level-bar"
+                            style="height: 100%; width: 50%; background: var(--color-status-medium); border-radius: 4px; transition: width 0.5s ease, background-color 0.5s ease;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Wait Times Panel -->
+        <section class="card wait-times-panel">
+            <div class="card-header">
+                <h2><i class="fas fa-clock"></i> Wait Time Predictions</h2>
+            </div>
+            <div class="card-content wait-times-content">
+                <div class="wait-category">
+                    <h3 class="label">Gates</h3>
+                    <ul class="wait-list" id="gate-waits">
+                        <!-- Populated via JS -->
+                    </ul>
+                </div>
+                <div class="wait-category">
+                    <h3 class="label">Food Courts</h3>
+                    <ul class="wait-list" id="food-waits">
+                        <!-- Populated via JS -->
+                    </ul>
+                </div>
+                <div class="wait-category">
+                    <h3 class="label">Restrooms</h3>
+                    <ul class="wait-list" id="restroom-waits">
+                        <!-- Populated via JS -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Heatmap Panel -->
+        <section class="card heatmap-panel">
+            <div class="card-header">
+                <h2><i class="fas fa-fire"></i> Live Crowd Heatmap</h2>
+                <div class="legend">
+                    <span class="legend-item"><span class="dot low"></span> Low</span>
+                    <span class="legend-item"><span class="dot medium"></span> Medium</span>
+                    <span class="legend-item"><span class="dot high"></span> High</span>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="stadium-map" id="visual-map">
+                    <svg viewBox="0 0 1000 600" class="stadium-svg" preserveAspectRatio="xMidYMid meet">
+                        <!-- Outer Stadium Boundary -->
+                        <rect x="50" y="50" width="900" height="500" rx="150" class="svg-boundary" fill="none"
+                            stroke="rgba(255,255,255,0.05)" stroke-width="4" stroke-dasharray="20 10" />
+
+                        <!-- Field / Pitch -->
+                        <rect x="300" y="150" width="400" height="300" rx="40" class="svg-field" />
+                        <g class="svg-center">
+                            <circle cx="500" cy="300" r="50" fill="none" class="pitch-line" />
+                            <circle cx="500" cy="300" r="5" fill="rgba(255,255,255,0.6)" />
+                            <line x1="500" y1="150" x2="500" y2="450" class="pitch-line" />
+                            <rect x="300" y="225" width="60" height="150" fill="none" class="pitch-line" />
+                            <rect x="640" y="225" width="60" height="150" fill="none" class="pitch-line" />
+                        </g>
+
+                        <!-- North Zone (VIP) -->
+                        <path id="zone-north" class="zone-path"
+                            d="M300,140 Q500,-20 700,140 L850,70 Q500,-120 150,70 Z" />
+                        <text x="500" y="80" class="zone-text" text-anchor="middle">NORTH STAND (VIP)</text>
+
+                        <!-- South Zone -->
+                        <path id="zone-south" class="zone-path"
+                            d="M300,460 Q500,620 700,460 L850,530 Q500,720 150,530 Z" />
+                        <text x="500" y="520" class="zone-text" text-anchor="middle">SOUTH STAND</text>
+
+                        <!-- East Zone -->
+                        <path id="zone-east" class="zone-path"
+                            d="M710,150 L860,80 Q980,300 860,520 L710,450 Q800,300 710,150 Z" />
+                        <text x="820" y="305" class="zone-text" text-anchor="middle" transform="rotate(90 820 305)">EAST
+                            STAND</text>
+
+                        <!-- West Zone -->
+                        <path id="zone-west" class="zone-path"
+                            d="M290,150 L140,80 Q20,300 140,520 L290,450 Q200,300 290,150 Z" />
+                        <text x="180" y="305" class="zone-text" text-anchor="middle"
+                            transform="rotate(-90 180 305)">WEST STAND</text>
+
+                        <!-- Dynamic Center feature overlaid via HTML foreignObject -->
+                        <foreignObject x="350" y="220" width="300" height="160">
+                            <div class="center-feature-svg" id="map-center">
+                                <i class="fas fa-futbol" id="center-icon"></i>
+                                <span id="center-text">PITCH</span>
+                            </div>
+                        </foreignObject>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Assistant Panel -->
+        <section class="card ai-panel" id="chat-box">
+            <div class="card-header">
+                <h2><i class="fas fa-robot"></i> Intelligence Systems</h2>
+                <span class="badge" style="background:#00d4ff;color:#000;">ONLINE</span>
+            </div>
+            <div class="card-content chat-content">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message bot">
+                        <p>COMMAND CENTER AI initialized. Query live congestion data, transport status, or incident
+                            logs.</p>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Enter query parameters..." autocomplete="off">
+                    <button id="send-msg"><i class="fas fa-terminal"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transport Panel -->
+        <section class="card transport-panel">
+            <div class="card-header">
+                <h2><i class="fas fa-space-shuttle"></i> Departure Vectors</h2>
+            </div>
+            <div class="card-content">
+                <div id="transport-status" class="transport-container">
+                    <p class="loading">Awaiting target lock...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/app.js"></script>
+</body>
+
+</html>
