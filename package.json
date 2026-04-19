@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test": "jest",
     "start": "node server.js",
-    "test": "jest"
+    "minify:js": "uglifyjs public/js/app.js -o public/js/app.min.js -c -m",
+    "minify:css": "cleancss -o public/css/style.min.css public/css/style.css",
+    "build": "npm run minify:js && npm run minify:css"
   },
   "repository": {
     "type": "git",
@@ -30,7 +33,9 @@
     "helmet": "^8.1.0"
   },
   "devDependencies": {
+    "clean-css-cli": "^5.6.3",
     "jest": "^30.3.0",
-    "supertest": "^7.2.2"
+    "supertest": "^7.2.2",
+    "uglify-js": "^3.19.3"
   }
 }

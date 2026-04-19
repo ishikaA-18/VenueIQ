@@ -7,7 +7,18 @@
     <title>VenueIQ - Smart Venue Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
+    <style>
+        :focus-visible {
+            outline: 3px solid #00d4ff;
+            outline-offset: 3px;
+            border-radius: 3px;
+        }
+
+        .skip-link:focus {
+            top: 0 !important;
+        }
+    </style>
 
     <!-- Google Analytics 4 (Mock) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -37,7 +48,7 @@
             <h1>VenueIQ <span class="badge">v2.0</span></h1>
         </div>
         <div class="nav-controls">
-            <select id="event-type" class="venue-select" aria-label="Select Event Type">
+            <select id="event-type" class="venue-select" aria-label="Select Event Type" tabindex="0">
                 <option value="stadium">🏟️ Outdoor Stadium (Field Sports)</option>
                 <option value="arena">🏀 Indoor Arena (Basketball/Concerts)</option>
                 <option value="speedway">🏎️ Motorsport Speedway (Racing)</option>
@@ -45,7 +56,7 @@
                 <option value="velodrome">🚴 Cycling Velodrome (Banked Track)</option>
                 <option value="hippodrome">🏇 Hippodrome (Horse Racing)</option>
             </select>
-            <select id="ticket-type" class="dark-select" aria-label="Select Ticket Type">
+            <select id="ticket-type" class="dark-select" aria-label="Select Ticket Type" tabindex="0">
                 <option value="general">General Admission</option>
                 <option value="vip">VIP Access</option>
             </select>
@@ -201,9 +212,13 @@
                     </div>
                 </div>
                 <div class="chat-input-area">
+                    <span id="chat-instructions"
+                        style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Type your
+                        question and press Enter or click the send button</span>
                     <input type="text" id="chat-input" placeholder="Enter query parameters..." autocomplete="off"
-                        aria-label="Chat input message">
-                    <button id="send-msg" aria-label="Send Message"><i class="fas fa-terminal"></i></button>
+                        aria-label="Chat input message" tabindex="0">
+                    <button id="send-msg" aria-label="Send Message" tabindex="0" role="button"><i
+                            class="fas fa-terminal"></i></button>
                 </div>
             </div>
         </section>
@@ -233,9 +248,10 @@
                     src="https://maps.google.com/maps?q=22.5726,88.3639&z=15&output=embed"
                     aria-label="Google Map View - Salt Lake Stadium, Kolkata">
                 </iframe>
+            </div>
         </section>
     </main>
-    <script src="/js/app.js" defer></script>
+    <script src="/js/app.min.js" defer></script>
 </body>
 
 </html>
