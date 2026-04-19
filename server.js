@@ -31,8 +31,7 @@ app.use(helmet({
             imgSrc: ["'self'", "data:", "https://maps.googleapis.com", "https://maps.gstatic.com", "https://*.googleapis.com"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
             fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-            connectSrc: ["'self'", "https://cdn.jsdelivr.net", "https://www.google-analytics.com"],
-            frameworkSrc: ["'self'"]
+            connectSrc: ["'self'", "https://cdn.jsdelivr.net", "https://www.google-analytics.com"]
         }
     }
 }));
