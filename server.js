@@ -84,24 +84,39 @@ app.post('/api/chat', apiLimiter, [
         const apiKey = process.env.GEMINI_API_KEY;
         const genAI = new GoogleGenerativeAI(apiKey);
 
-        const { message } = req.body;
+        const { message, venue } = req.body;
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-        const prompt = `You are the VenueIQ AI Assistant, a smart venue management system for a large sporting event. 
-Respond to attendees with helpful, clear, and concise information. 
+        const venueData = {
+            stadium: { name: "Outdoor Stadium", transport: "Metro Line 1 (Clear, 5m wait)", alt: "Yellow Cab Stand (10m wait)" },
+            arena: { name: "Indoor Arena", transport: "Bus Stop 42 (20m wait)", alt: "Auto Stand (5m wait)" },
+            speedway: { name: "Motorsport Speedway", transport: "Shuttle Bus (15m wait)", alt: "Yellow Cab Stand (10m wait)" },
+            cricket: { name: "Cricket Ground", transport: "Cricket Ground Stn (30m wait)", alt: "Auto Stand (5m wait) — recommended" },
+            velodrome: { name: "Cycling Velodrome", transport: "Metro Line 2 (Clear, 8m wait)", alt: "Bus Stop 12 (15m wait)" },
+            hippodrome: { name: "Hippodrome", transport: "Yellow Cab Stand (10m wait)", alt: "Bus Stop 7 (20m wait)" }
+        };
+
+        const activeVenue = venueData[venue] || venueData['stadium'];
+
+        const prompt = `You are the VenueIQ AI Assistant, a smart venue management system for a large sporting event.
+Respond to attendees with helpful, clear, and concise information.
+
+ACTIVE VENUE: ${activeVenue.name}
 
 Current Venue Status:
 - Crowd Levels: Moderate overall, high concentration near the Food Court and East Gate.
 - Gate Statuses: VIP (North Gate) is open with fast entry. General gates (East, West, South) are open. East gate is busy.
 - Wait Times: 5 mins at North Gate, 15 mins at West/South Gates, 25 mins at East Gate. Food stalls have a 10-min wait.
+- Primary Transport: ${activeVenue.transport}
+- Alternative Transport: ${activeVenue.alt}
 
 Instructions:
 - Keep answers to 1-3 short sentences.
-- Be proactive and suggest alternatives (e.g., if East Gate is busy, suggest West or South).
+- ONLY reference transport options for the ACTIVE VENUE above.
+- Be proactive and suggest alternatives when primary options are busy.
 - Always maintain a professional, helpful, and welcoming tone.
 
 User Question: ${message}`;
-
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();

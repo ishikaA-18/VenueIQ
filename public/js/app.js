@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         medium: 'var(--color-status-medium)',
         high: 'var(--color-status-high)'
     };
-    
+
     const eventConfigs = {
         stadium: {
             icon: "fa-futbol",
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!el) continue;
                 const status = currentData.zones[zone].congestion;
                 el.style.fill = statusColors[status];
-                
+
                 if (status === 'high') {
                     el.classList.add('zone-high-alert');
                 } else {
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (gateNodes.length === 0) {
                 // Initial creation step
-                gateList.innerHTML = entries.map(([zone, data]) => 
+                gateList.innerHTML = entries.map(([zone, data]) =>
                     `<li id="gate-item-${zone}"><span>${capitalize(zone)} Gate</span> <span class="wait-val">${data.waitTime} mins</span></li>`
                 ).join('');
             } else {
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Food
             const foodList = document.getElementById('food-waits');
             if (foodList.children.length === 0) {
-                foodList.innerHTML = currentData.food.map(f => 
+                foodList.innerHTML = currentData.food.map(f =>
                     `<li id="${f.id}"><span>${escapeHTML(f.name)}</span> <span class="wait-val">${f.waitTime} mins</span></li>`
                 ).join('');
             } else {
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Restrooms
             const restList = document.getElementById('restroom-waits');
             if (restList.children.length === 0) {
-                restList.innerHTML = currentData.restrooms.map(r => 
+                restList.innerHTML = currentData.restrooms.map(r =>
                     `<li id="${r.id}"><span>${escapeHTML(r.name)}</span> <span class="wait-val">${r.waitTime} mins</span></li>`
                 ).join('');
             } else {
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setStatusBadge(currentData.zones.north.congestion);
             } else {
                 const candidates = ['south', 'east', 'west'];
-                candidates.sort((a,b) => currentData.zones[a].waitTime - currentData.zones[b].waitTime);
+                candidates.sort((a, b) => currentData.zones[a].waitTime - currentData.zones[b].waitTime);
                 best = candidates[0];
                 alt = candidates[1];
 
@@ -247,14 +247,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Crowd Bar Generation
             const allWaits = Object.values(currentData.zones).map(z => z.waitTime);
-            const avgWait = allWaits.reduce((a,b) => a+b, 0) / allWaits.length;
-            
+            const avgWait = allWaits.reduce((a, b) => a + b, 0) / allWaits.length;
+
             let percentage = (avgWait / 130) * 100;
             if (percentage > 100) percentage = 100;
-            
+
             const barEl = document.getElementById('crowd-level-bar');
             const textEl = document.getElementById('crowd-level-text');
-            
+
             if (barEl && textEl) {
                 barEl.style.width = percentage + "%";
                 if (avgWait < 35) {
@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (baseWait < 0) baseWait = 0;
                 if (baseWait > 60) baseWait = 60;
                 currentData.zones[zone].baseWait = baseWait;
-                
+
                 let wait = Math.floor(baseWait * capacityMultiplier);
                 currentData.zones[zone].waitTime = wait;
 
@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             currentData.food.forEach(f => {
                 let baseWait = f.baseWait || (f.waitTime / capacityMultiplier) || 5;
-                baseWait = baseWait + Math.floor(Math.random()*3) - 1;
+                baseWait = baseWait + Math.floor(Math.random() * 3) - 1;
                 if (baseWait < 0) baseWait = 0;
                 if (baseWait > 60) baseWait = 60;
                 f.baseWait = baseWait;
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             currentData.restrooms.forEach(r => {
                 let baseWait = r.baseWait || (r.waitTime / capacityMultiplier) || 2;
-                baseWait = baseWait + Math.floor(Math.random()*3) - 1;
+                baseWait = baseWait + Math.floor(Math.random() * 3) - 1;
                 if (baseWait < 0) baseWait = 0;
                 if (baseWait > 60) baseWait = 60;
                 r.baseWait = baseWait;
@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleChatSend() {
         const rawText = chatInput.value.trim();
         if (!rawText) return;
-        
+
         const cleanText = escapeHTML(rawText);
 
         appendMessage(cleanText, 'user');
@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: rawText }) // Back-end validation prevents injection
+                body: JSON.stringify({ message: rawText, venue: document.getElementById('event-type').value })
             });
             const data = await res.json();
 
