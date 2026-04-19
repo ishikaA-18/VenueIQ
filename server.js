@@ -87,12 +87,47 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://maps.googleapis.com", "https://www.googletagmanager.com", "https://cdn.jsdelivr.net"],
-            frameSrc: ["'self'", "https://maps.google.com", "https://www.google.com"],
-            imgSrc: ["'self'", "data:", "https://maps.googleapis.com", "https://maps.gstatic.com", "https://*.googleapis.com"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-            connectSrc: ["'self'", "https://cdn.jsdelivr.net", "https://www.google-analytics.com"]
+            scriptSrc: ["'self'",
+                "'unsafe-inline'",
+                "https://maps.googleapis.com",
+                "https://www.googletagmanager.com",
+                "https://cdn.jsdelivr.net",
+                "https://www.gstatic.com"
+            ],
+            frameSrc: [
+                "'self'",
+                "https://maps.google.com",
+                "https://www.google.com"
+            ],
+            imgSrc: [
+                "'self'",
+                "data:",
+                "https://maps.googleapis.com",
+                "https://maps.gstatic.com",
+                "https://*.googleapis.com",
+                "https://www.gstatic.com"            // Added for Firebase/GA images
+            ],
+            styleSrc: [
+                "'self'",
+                "'unsafe-inline'",
+                "https://fonts.googleapis.com",
+                "https://cdnjs.cloudflare.com",
+                "https://cdn.jsdelivr.net"
+            ],
+            fontSrc: [
+                "'self'",
+                "https://fonts.gstatic.com",
+                "https://cdnjs.cloudflare.com"
+            ],
+            connectSrc: [
+                "'self'",
+                "https://cdn.jsdelivr.net",
+                "https://www.google-analytics.com",
+                "https://*.googleapis.com",          // REQUIRED: For Firebase/Maps APIs
+                "https://*.firebaseio.com",           // REQUIRED: For Firebase backend
+                "https://*.analytics.google.com",    // REQUIRED: For GA4 data flow
+                "https://www.gstatic.com"
+            ]
         }
     }
 }));
@@ -115,7 +150,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
     maxAge: '1d',
     etag: true
 }));
-
+app.get('/favicon.ico', (req, res) => res.status(204).end());
 /**
  * Health check endpoint for uptime monitoring and Cloud Run readiness probes.
  *
