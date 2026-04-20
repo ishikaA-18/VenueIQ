@@ -86,6 +86,7 @@ VenueIQ/
 │   ├── js/
 │   │   ├── app.js
 │   │   └── app.min.js     # Minified for production
+│   │   └── firebase-config.js  # Firebase initialization & Auth
 │   └── index.html
 ├── tests/                 # Automated test suite
 │   └── server.test.js
