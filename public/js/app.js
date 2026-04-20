@@ -1,6 +1,6 @@
 import { auth, db, provider } from './js/firebase-config.js';
 import { signInWithRedirect, signOut, getRedirectResult, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
-import { doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.11.0/firestore.js';
+import { doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
 window.firebaseSignIn = () => signInWithRedirect(auth, provider);
 window.firebaseSignOut = () => signOut(auth);
