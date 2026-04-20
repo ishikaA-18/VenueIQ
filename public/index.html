@@ -54,34 +54,70 @@
 
         // --- Firebase Auth: Sign in with Google ---
         window.firebaseSignIn = async () => {
-            try {
-                const result = await signInWithRedirect(auth, provider);
-                // Handle redirect result on page load
-                getRedirectResult(auth).then((result) => {
-                    if (result && result.user) {
-                        document.getElementById('auth-btn').innerText = 'Sign Out';
-                        document.getElementById('auth-status').innerText = `Signed in as ${result.user.displayName}`;
-                        setDoc(doc(db, "users", result.user.uid), {
-                            name: result.user.displayName,
-                            email: result.user.email,
-                            lastLogin: new Date().toISOString()
-                        }, { merge: true });
-                    }
-                }).catch((e) => console.error("Redirect result error:", e));
-                const user = result.user;
-                document.getElementById('auth-btn').innerText = 'Sign Out';
-                document.getElementById('auth-status').innerText = `Signed in as ${user.displayName}`;
-                // Save user to Firestore
-                await setDoc(doc(db, "users", user.uid), {
-                    name: user.displayName,
-                    email: user.email,
-                    lastLogin: new Date().toISOString()
-                }, { merge: true });
-            } catch (e) {
-                console.error("Auth error:", e);
-            }
+            await signInWithRedirect(auth, provider);
         };
 
+        window.firebaseSignOut = async () => {
+            await signOut(auth);
+            document.getElementById('auth-btn').innerText = 'Sign in with Google';
+            document.getElementById('auth-status').innerText = '';
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Handle redirect result on page load
+            getRedirectResult(auth).then((result) => {
+                if (result && result.user) {
+                    document.getElementById('auth-btn').innerText = 'Sign Out';
+                    document.getElementById('auth-status').innerText = `Signed in as ${result.user.displayName}`;
+                    setDoc(doc(db, "users", result.user.uid), {
+                        name: result.user.displayName,
+                        email: result.user.email,
+                        lastLogin: new Date().toISOString()
+                    }, { merge: true });
+                }
+            }).catch((e) => console.error("Redirect result error:", e));
+
+            const btn = document.getElementById('auth-btn');
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    if (btn.innerText === 'Sign Out') {
+                        window.firebaseSignOut();
+                    } else {
+                        window.firebaseSignIn();
+                    }
+                });
+            }
+
+            // Firestore real-time listener
+            onSnapshot(doc(db, "venue_status", "current"), (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.crowd_level) {
+                        document.getElementById('crowd-level-text').innerText = data.crowd_level;
+                    }
+                    if (data.best_gate) {
+                        document.getElementById('best-gate').innerText = data.best_gate;
+                    }
+                }
+            });
+
+            setDoc(doc(db, "venue_status", "current"), {
+                crowd_level: "Moderate",
+                best_gate: "West Gate",
+                updated_at: new Date().toISOString()
+            }, { merge: true });
+
+            // Track auth state
+            onAuthStateChanged(auth, (user) => {
+                const btn = document.getElementById('auth-btn');
+                const status = document.getElementById('auth-status');
+                if (user && btn && status) {
+                    btn.innerText = 'Sign Out';
+                    status.innerText = `Signed in as ${user.displayName}`;
+                }
+            });
+        });
         window.firebaseSignOut = async () => {
             await signOut(auth);
             document.getElementById('auth-btn').innerText = 'Sign in with Google';
