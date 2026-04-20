@@ -33,7 +33,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -55,7 +55,19 @@
         // --- Firebase Auth: Sign in with Google ---
         window.firebaseSignIn = async () => {
             try {
-                const result = await signInWithPopup(auth, provider);
+                const result = await signInWithRedirect(auth, provider);
+                // Handle redirect result on page load
+                getRedirectResult(auth).then((result) => {
+                    if (result && result.user) {
+                        document.getElementById('auth-btn').innerText = 'Sign Out';
+                        document.getElementById('auth-status').innerText = `Signed in as ${result.user.displayName}`;
+                        setDoc(doc(db, "users", result.user.uid), {
+                            name: result.user.displayName,
+                            email: result.user.email,
+                            lastLogin: new Date().toISOString()
+                        }, { merge: true });
+                    }
+                }).catch((e) => console.error("Redirect result error:", e));
                 const user = result.user;
                 document.getElementById('auth-btn').innerText = 'Sign Out';
                 document.getElementById('auth-status').innerText = `Signed in as ${user.displayName}`;
