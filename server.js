@@ -98,7 +98,9 @@ app.use(helmet({
             frameSrc: [
                 "'self'",
                 "https://maps.google.com",
-                "https://www.google.com"
+                "https://www.google.com",
+                "https://active-axle-493508-f2.firebaseapp.com",
+                "https://accounts.google.com"
             ],
             imgSrc: [
                 "'self'",
