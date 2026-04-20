@@ -92,7 +92,8 @@ app.use(helmet({
                 "https://maps.googleapis.com",
                 "https://www.googletagmanager.com",
                 "https://cdn.jsdelivr.net",
-                "https://www.gstatic.com"
+                "https://www.gstatic.com",
+                "https://apis.google.com"
             ],
             frameSrc: [
                 "'self'",
